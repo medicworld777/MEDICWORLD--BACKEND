@@ -24,12 +24,16 @@ public class UserController {
 
 	@Autowired
 	private UserService ser;
+	
+	String emailid="";
 
 	
 	@PostMapping("signup")
-	public ResponseEntity<Object> signupUser(@RequestBody User u) {
+	public ResponseEntity<Object> signupUser(@RequestBody User u) 
+	{
 		Object obj1 = ser.signupUser(u);
-		if (obj1 instanceof User) {
+		if (obj1 instanceof User)
+		{
 			return ResponseEntity.status(HttpStatus.CREATED).body(obj1);
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(obj1);
@@ -56,7 +60,32 @@ public class UserController {
 		}
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ser.getAllUser());
 	}
+	
+	
+	@GetMapping("checkemail")
+	public ResponseEntity<String> checkEmail(@RequestHeader String email){
+		String eid=ser.findByemail(email);
+		if(eid.equals(email)) {
+			this.emailid=eid;			
+		     return ResponseEntity.status(200).body(eid);
+		}
+		return ResponseEntity.status(400).body(eid);
+	}
 
+
+	@GetMapping("resetPwswd")
+	public ResponseEntity<String> toChangepwd( @RequestHeader String password,@RequestHeader String confirm)
+			 {
+		
+		String updated =ser.changePwdService(password,confirm);
+		if (updated.equals("Password reset successful")) {
+			return ResponseEntity.status(200).body(updated);
+		} 
+		return  ResponseEntity.status(400).body(updated);
+		}
+	
+	
+	
 }
 
 
